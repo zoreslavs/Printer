@@ -1,6 +1,6 @@
 //
 //  main.cpp
-//  Printer
+//  CppPractice
 //
 //  Created by Zoreslav on 22.06.2020.
 //  Copyright © 2020 Zoreslav. All rights reserved.
@@ -8,9 +8,9 @@
 
 #include <iostream>
 #include <string>
-
+ 
 using namespace std;
-
+ 
 class PrintDataBase
 {
 public:
@@ -18,61 +18,70 @@ public:
     virtual ~PrintDataBase() {}
     virtual void print() = 0;
 };
-
+ 
 template <class T>
 class PrintData : public PrintDataBase
 {
 public:
-    PrintData(const T value) : m_value(value) {}
+    PrintData(const T& value) : m_value(value) {}
     ~PrintData() {}
-    
+ 
     void print() override
     {
         cout << m_value << endl;
     }
-    
+ 
 private:
-    T m_value;
+    const T& m_value;
 };
-
+ 
 template <class T>
 class PrintData<T*> : public PrintDataBase
 {
 public:
     PrintData(T* value) : m_value(value) {}
     ~PrintData() {}
-    
+ 
     void print() override
     {
         cout << '[' << *m_value << ']' << endl;
     }
-    
+ 
 private:
     T* m_value;
 };
-
+ 
 class Printer
 {
 public:
     Printer() : m_data(nullptr) {}
-    
+ 
     ~Printer()
     {
-        delete m_data;
+        clear();
     }
-    
+ 
     template <class T>
     void operator=(const T& value)
     {
+        if (m_data)
+            clear();
+        
         m_data = new PrintData<T>(value);
     }
-    
+ 
     void print()
     {
         if (m_data)
             m_data->print();
     }
     
+    void clear()
+    {
+        delete m_data;
+        m_data = nullptr;
+    }
+ 
 private:
     PrintDataBase* m_data;
 };
@@ -108,5 +117,6 @@ int main()
  
     delete fvalue;
     delete value;
+    
     return 0;
 }
